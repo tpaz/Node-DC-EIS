@@ -1,0 +1,34 @@
+version: '2.2'
+services:
+  node:
+      build:
+        context: https://github.com/Node-DC/Node-DC-EIS.git
+        dockerfile: Dockerfile-node-cluster
+      image: node-dc-eis:latest
+      tty: true
+      restart: always
+      ports:
+        - "9000:9000"
+      environment:
+        - CPU_COUNT=-1
+        - DB_URL=mongodb://mongo:27017/node-dc-eis-db-9000
+      depends_on:
+        - mongo
+      networks:
+        - intel
+  mongo:
+      build:
+        context: https://github.com/Node-DC/Node-DC-EIS.git
+        dockerfile: Dockerfile-mongo
+      tty: true
+      restart: always
+      #ports:
+      #  - "27017:27017"
+      volumes:
+        - ./mongo/data:/data/db
+      networks:
+        - intel 
+
+networks:
+  intel:
+

@@ -17,16 +17,16 @@
 'use strict';
 module.exports = {
   'cpu_count' : process.env.CPU_COUNT || 0,
-  'db_url': process.env.DB_URL || 'mongodb://127.0.0.1:27017/node-els-db',
+  'db_url': process.env.DB_URL || 'mongodb://mongo:27017/node-els-db',
   'app_host' : process.env.SERVER_IP ,
   'app_port' : process.env.SERVER_PORT || 9000,
   'app_mode' : 'Cluster',
-  'count': 10000, 
+  'count': 100000, 
   'zipcount': 5,
   'lastnamecount': 5,
   'image_name' : process.env.IMAGE_NAME || 'image.jpeg',
   'mongodb_timeout' : 30000,
-  'enable_caching' : false,
+  'enable_caching' : true,
   'cache_max_size' : 100000,
   'cache_expiration' : 1200000
 };

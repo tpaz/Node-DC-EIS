@@ -1,0 +1,9 @@
+version: '2.2'
+services:
+  iclient:
+      build:
+        context: https://github.com/Node-DC/Node-DC-EIS.git
+        dockerfile: Dockerfile-client
+      tty: true
+      restart: always
+
