@@ -55,6 +55,13 @@ function startSingleNodeInstance() {
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(bodyParser.json());
 
+  //get throughput metric
+  app.use(function(req, res, next) {
+    // notify master about the request
+    process.send({ cmd: 'notifyRequest' });
+    next();
+  });
+
   // Enable pug templating
   app.set('views', './views');
   app.set('view engine', 'pug');
@@ -157,6 +164,9 @@ function startSingleNodeInstance() {
 
 function startCluster(cpus) {
   const cluster = require('cluster');
+  // for master to report metrics:
+  const httpm = require('http');
+
   if (cluster.isMaster) {
     if ((cpus === undefined) || (cpus < 0)) {
       cpuCount = os.cpus().length;
@@ -165,17 +175,21 @@ function startCluster(cpus) {
     printHostInfo();
     console.log('Setting up cluster with 1 Master (pid: ' + process.pid + ') and ' + cpuCount + ' workers..');
 
+    var requestsCount = 0;    
     var workers = [];
     for (var i=0 ;i < cpuCount; i++) {
       let worker = cluster.fork();
       workers.push(worker);
 
       worker.on('message', function(msg) {
-        if(msg.event) {
+        if (msg.event) {
           console.log('Broadcasting message');
           for(let wrk in workers) {
             workers[wrk].send(msg);
           }
+        }
+        else if (msg.cmd && msg.cmd === 'notifyRequest') {
+            requestsCount += 1;
         }
       });
     }
@@ -188,6 +202,13 @@ function startCluster(cpus) {
       console.log('exit event occured. Stopping the server');
       process.exit(0);
     });
+
+    //metrics server listener
+    httpm.Server((req, res) => {
+        res.writeHead(200);
+        res.end(requestsCount+"\n");
+    }).listen(8000);
+
   } else {
     startSingleNodeInstance();
   }

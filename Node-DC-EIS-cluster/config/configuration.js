@@ -16,9 +16,9 @@
 
 'use strict';
 module.exports = {
-  'cpu_count' : process.env.CPU_COUNT || 0,
+  'cpu_count' : process.env.CPU_COUNT || -1,
   'db_url': process.env.DB_URL || 'mongodb://mongo:27017/node-els-db',
-  'app_host' : process.env.SERVER_IP ,
+  'app_host' : process.env.SERVER_IP,
   'app_port' : process.env.SERVER_PORT || 9000,
   'app_mode' : 'Cluster',
   'count': 100000, 
