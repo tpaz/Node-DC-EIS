@@ -35,6 +35,7 @@ function startSingleNodeInstance() {
   var employeesCtrl = require('./controllers/employees_controller');
   var loaderCtrl = require('./controllers/loader');
   var app = express();
+  var notifyBuffer = 0;
 
   // Connect to the database
   mongoose.connect(appConfig.db_url);
@@ -55,10 +56,14 @@ function startSingleNodeInstance() {
   app.use(bodyParser.urlencoded({extended: true}));
   app.use(bodyParser.json());
 
-  //get throughput metric
+  //get throughput metric (essentially requests aggregation)
   app.use(function(req, res, next) {
-    // notify master about the request
-    process.send({ cmd: 'notifyRequest' });
+    notifyBuffer += 1
+    // notify master about the request after filling up buffer
+    if (notifyBuffer == 5) {
+      process.send({ cmd: 'notifyRequest' });
+      notifyBuffer = 0;
+    }
     next();
   });
 
@@ -189,7 +194,7 @@ function startCluster(cpus) {
           }
         }
         else if (msg.cmd && msg.cmd === 'notifyRequest') {
-            requestsCount += 1;
+            requestsCount += 5;
         }
       });
     }
