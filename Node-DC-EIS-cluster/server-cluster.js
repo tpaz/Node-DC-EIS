@@ -208,11 +208,12 @@ function startCluster(cpus) {
       process.exit(0);
     });
 
+    let metrics_port = process.env.METRICS_PORT || 8000;
     //metrics server listener
     httpm.Server((req, res) => {
         res.writeHead(200);
         res.end(requestsCount+"\n");
-    }).listen(8000);
+    }).listen(metrics_port);
 
   } else {
     startSingleNodeInstance();
