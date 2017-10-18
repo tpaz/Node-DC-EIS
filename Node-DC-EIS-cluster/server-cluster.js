@@ -19,6 +19,7 @@
 var appConfig = require('./config/configuration');
 var app_host = appConfig.app_host;
 var port = appConfig.app_port;
+var metrics_port = port+1000;
 const os = require('os');
 var cpuCount = Number(appConfig.cpu_count);
 
@@ -208,7 +209,8 @@ function startCluster(cpus) {
       process.exit(0);
     });
 
-    let metrics_port = process.env.METRICS_PORT || 8000;
+    //let metrics_port = process.env.METRICS_PORT || 8000;
+    // preferred a more dynamic approach, even if it has limitations...
     //metrics server listener
     httpm.Server((req, res) => {
         res.writeHead(200);
