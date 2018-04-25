@@ -1,4 +1,4 @@
-version: '2.2'
+version: '3.2'
 services:
   node:
       build:
@@ -29,7 +29,19 @@ services:
       volumes:
         - ./mongo/data:/data/db
       networks:
-        - intel 
+        - intel
+  # adding client here as it is comfortable to run client&server on the same host
+  # with no need to modify anything in client conf
+  iclient:
+      build:
+        context: .
+        dockerfile: Dockerfile-client
+      tty: true
+      restart: always
+      depends_on:
+        - node
+      networks:
+        - intel
 
 networks:
   intel:
