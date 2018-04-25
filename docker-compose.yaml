@@ -18,9 +18,10 @@ services:
       networks:
         - intel
   mongo:
-      build:
-        context: https://github.com/Node-DC/Node-DC-EIS.git
-        dockerfile: Dockerfile-mongo
+      #build:
+      #  context: https://github.com/Node-DC/Node-DC-EIS.git
+      #  dockerfile: Dockerfile-mongo
+      image: mongo:latest
       tty: true
       restart: always
       #ports:
